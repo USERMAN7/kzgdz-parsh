@@ -14,12 +14,18 @@ if [ -n $book ]; then
 		bookn="Geometry"
 	fi
 fi
-printf "\ninput number of the exercise:"
+printf "input number of the exercise:"
 read -r ex
 ex="${ex//./-}"
 echo "downloading from $book$ex"
 wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; exit 1; }
-url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}')
+url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
 rm "./$ex-tmp"
+if [ -n $url ]; then
+	echo "found img "$url" "
+else
+	echo "not found.. exiting"
+	exit 1
+fi
 wget -O "$bookn-$ex.jpg" "$url" &>/dev/null|| { echo "failed to download!"; exit 1; }
 echo "saved $bookn-$ex.jpg"
