@@ -30,13 +30,16 @@ ex="${ex//./-}" # converting "." to "."
 echo "downloading from $book$ex"
 wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; exit 1; }
 url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
+url=$(echo "$url" | tr -s '[:space:]' ' ')
 rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 # also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
-if [ -n $url ]; then # can be empty if some of commands fails
-	echo "found img "$url" " 
-else
-	echo "not found.. exiting"
-	exit 1
-fi
-wget -O "$bookn-$ex.jpg" "$url" &>/dev/null|| { echo "failed to download!"; exit 1; } # deleting output to have cleaner look
-echo "saved $bookn-$ex.jpg" # saying out loud that file was downloaded because there's no output from wget
+echo found img $url
+IFS=' ' read -r -a ur <<< "$url"
+cycle=0
+for img_url in "${ur[@]}"; do
+    wget -O "${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+    echo "${bookn}-${ex}-${cycle}.jpg was saved"
+    ((cycle++))
+done
+#wget -O "$bookn-$ex.jpg" "$url" &>/dev/null|| { echo "failed to download!"; exit 1; } # deleting output to have cleaner look
+#echo "saved $bookn-$ex.jpg" # saying out loud that file was downloaded because there's no output from wgefor url in $urls; do
