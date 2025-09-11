@@ -26,6 +26,10 @@ else
 fi
 printf "input number of the exercise:"
 read -r ex
+if [ -z $ex ]; then
+	echo input something
+	exit 1
+fi
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
 wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; exit 1; }
