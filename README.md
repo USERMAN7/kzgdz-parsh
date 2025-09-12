@@ -10,4 +10,4 @@ or checkout [github releases](https://github.com/USERMAN7/kzgdz-parsh/releases)
 that's a bash script so nothing to compile!
 
 ### Dependicies
-depends on wget(busybox/coreutils),bash and thats it!
+depends on `wget(busybox/coreutils),bash` and thats it!
