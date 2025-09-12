@@ -50,7 +50,6 @@ if [ -n "$1" ]; then
 			if [[ -n $4 ]]; then
 				ex=$(echo $4)
 				ex="${ex//./-}" # converting "." to "-"
-				echo $ex
 			else
 				echo "Pass exercise number"
 				exit 1
@@ -71,7 +70,7 @@ if [ -n "$1" ]; then
 			;;
 	esac
 
-		wget -O "${ex}-tmp" "$book-$ex" || {
+		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
 			echo "Failed to download url:$book-$ex";
 			exit 1; }
 		url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
@@ -81,7 +80,7 @@ if [ -n "$1" ]; then
 		cycle=0
 		for img_url in "${ur[@]}"; do
 		if [[ $cycle == 0 ]]; then
-		wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" || {
+		wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| {
 			echo "failed to download $img_url";
 			exit 1; 
 		}
