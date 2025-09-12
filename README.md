@@ -21,4 +21,5 @@ depends on `wget(busybox/coreutils),bash` and thats it!
 --interactive,-i    for interactive mode where you can type out which book and which exercise you want to download
 --book,-b   note always needs to be first argument, example of use "./main-parser.sh --book chemistry" then exercise needs to be passed see below
 --exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry you need to pass paragraph first then exercise use -e 3.7
+		example you can use it by typing "./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures" 
 ```
