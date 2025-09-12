@@ -2,7 +2,7 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
-echo "BETA only supported 8 grade. algebra,geometry"
+echo "BETA only supported 8 grade. algebra,geometry,chemistry"
 printf "Input the name of book:"
 read -r book
 if [ -z $book ]; then
@@ -36,8 +36,12 @@ read -r ex
 	exit 1
 	fi
 else
-	printf "Input number of paragrapth then exercise"
+	printf "Input number of paragrapth then exercise:"
 	read -r ex
+	if [ -z $ex ]; then
+		echo "input something"
+		exit 1
+	fi
 fi
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
