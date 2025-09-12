@@ -2,14 +2,27 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
+output_dir="./"
 if [[ -n "$1" ]]; then
 	case $1 in 
 		--help|-h)
-			echo "--help -h for this help menu"
+			echo "--help,-h		 for this help menu"
+			echo "--out-dir,-O		 to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example"
+			echo "--interactive,-i		for interactive mode where you can type out which book and which exercise you want to download"
 			exit 0
 			;;
-	esac	
+		--interactive|-i)
+			;;
+	esac
+else 
+	echo "No arguments were supplied defaulting to --interactive,-i"
+
 fi
+
+#while [ $# -gt 0 ]; do
+#	  echo "Argument: $1"
+#	    shift
+ #   done
 echo "BETA only supported 8 grade. algebra,geometry,chemistry"
 printf "Input the name of book:"
 read -r book
@@ -59,9 +72,9 @@ IFS=' ' read -r -a ur <<< "$url"
 cycle=0
 for img_url in "${ur[@]}"; do
 	    if [[ $cycle == 0 ]]; then
-		    wget -O "${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
     	    else
-	    	wget -O "${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    	wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
 	    fi
 	    echo "${bookn}-${ex}-${cycle}.jpg was saved"
 	    ((cycle++))
