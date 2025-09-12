@@ -31,7 +31,7 @@ if [ -n "$1" ]; then
 					bookn="Algebra"
 					;;
 				*)
-					echo "you can put here algebra,geometry,chemistry. Failed:$2"
+					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
 					exit 1
 					;;
 			esac
@@ -51,12 +51,12 @@ if [ -n "$1" ]; then
 				ex=$(echo $4)
 				ex="${ex//./-}" # converting "." to "-"
 			else
-				echo "Pass exercise number"
+				echo "Pass exercise number" >&2
 				exit 1
 			fi
 			;;
 		*)
-			echo "You must pass something here" &>2
+			echo "You must pass something here" >&2
 			exit 1
 	esac
 	case $5 in
@@ -64,7 +64,7 @@ if [ -n "$1" ]; then
 			if [ -d $6 ]; then
 				output_dir="$6"
 			else
-				echo "Not valid path:"$6""
+				echo "Not valid path:"$6"" >&2
 				exit 1
 			fi
 			;;
@@ -119,25 +119,25 @@ if [ -n $book ]; then
 		book="$chemistry"
 		bookn="Chemistry"
 	else 
-		echo "input geometry,algebra or chemistry"
+		echo "input geometry,algebra or chemistry" >&2
 		exit 1	
 	fi
 else
-	echo "input book name next time"
+	echo "input book name next time" >&2
 	exit 1
 fi
 if [ $book != "$chemistry" ]; then
 printf "input number of the exercise:"
 read -r ex
 	if [ -z $ex ]; then
-	echo input something
+	echo "input something" >&2
 	exit 1
 	fi
 else
 	printf "Input number of paragrapth then exercise:"
 	read -r ex
 	if [ -z $ex ]; then
-		echo "input something"
+		echo "input something" >&2
 		exit 1
 	fi
 fi
