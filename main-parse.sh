@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
+chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 echo "BETA only supported 8 grade. algebra,geometry"
 printf "Input the name of book:"
@@ -16,19 +17,27 @@ if [ -n $book ]; then
 	elif [ $book == "geometry" ]; then
 		book="$geometry"
 		bookn="Geometry"
-	else
-		echo "input geometry or algebra"
-		exit 1
+	elif [ $book == "chemistry" ]; then
+		book="$chemistry"
+		bookn="Chemistry"
+	else 
+		echo "input geometry,algebra or chemistry"
+		exit 1	
 	fi
 else
 	echo "input book name next time"
 	exit 1
 fi
+if [ $book != "$chemistry" ]; then
 printf "input number of the exercise:"
 read -r ex
-if [ -z $ex ]; then
+	if [ -z $ex ]; then
 	echo input something
 	exit 1
+	fi
+else
+	printf "Input number of paragrapth then exercise"
+	read -r ex
 fi
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
