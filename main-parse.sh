@@ -3,26 +3,108 @@ geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 output_dir="./"
-if [[ -n "$1" ]]; then
+if [ -n "$1" ]; then
 	case $1 in 
-		--help|-h)
-			echo "--help,-h		 for this help menu"
-			echo "--out-dir,-O		 to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example"
-			echo "--interactive,-i		for interactive mode where you can type out which book and which exercise you want to download"
+		--help|-h) # help menu currently there are no some commands that are here -_-
+			# but they will be added
+			echo "--help,-h	 for this help menu"
+			echo "--out-dir,-O	 to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example"
+			echo "--interactive,-i	for interactive mode where you can type out which book and which exercise you want to download"
+			echo "--book,-b	note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below"
+			echo "--exercise,-e	needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry you need to pass paragraph first then exercise use -e 3.7 "
 			exit 0
 			;;
-		--interactive|-i)
+		--interactive|-i) # what do i even code here bruh
+			;;
+		--book|-b)
+			case $2 in
+				geometry)
+					book="$geometry"
+					bookn="Geometry"
+					;;
+				chemistry)
+					book="$chemistry"
+					bookn="Chemistry"
+					;;
+				algebra)
+					book="$algebra"
+					bookn="Algebra"
+					;;
+				*)
+					echo "you can put here algebra,geometry,chemistry. Failed:$2"
+					exit 1
+					;;
+			esac
+			;;
+		--exercise|-e)
+			echo "Needs to be run as third argument after --book"
+			exit 1
+			;;
+		--out-dir|-O)
+			echo "Can be run but not necesarry after --exercise as fifth arg"
+			exit 1
 			;;
 	esac
-else 
-	echo "No arguments were supplied defaulting to --interactive,-i"
+	case $3 in 
+		--exercise|-e)
+			if [[ -n $4 ]]; then
+				ex=$(echo $4)
+				ex="${ex//./-}" # converting "." to "-"
+				echo $ex
+			else
+				echo "Pass exercise number"
+				exit 1
+			fi
+			;;
+		*)
+			echo "You must pass something here" &>2
+			exit 1
+	esac
+	case $5 in
+		--out-dir|-O)
+			if [ -d $6 ]; then
+				output_dir="$6"
+			else
+				echo "Not valid path:"$6""
+				exit 1
+			fi
+			;;
+	esac
 
+		wget -O "${ex}-tmp" "$book-$ex" || {
+			echo "Failed to download url:$book-$ex";
+			exit 1; }
+		url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
+		url=$(echo "$url" | tr -s '[:space:]' ' ')
+		rm "${output_dir}${ex}-tmp"
+		IFS=' ' read -r -a ur <<< "$url"
+		cycle=0
+		for img_url in "${ur[@]}"; do
+		if [[ $cycle == 0 ]]; then
+		wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" || {
+			echo "failed to download $img_url";
+			exit 1; 
+		}
+
+		else
+		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" || {
+			echo "failed to download $img_url";
+			exit 1;
+		}
+
+		fi
+		echo "${bookn}-${ex}-${cycle}.jpg was saved"
+		((cycle++))
+	done
+	exit 0
+else
+	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
 
-#while [ $# -gt 0 ]; do
-#	  echo "Argument: $1"
-#	    shift
- #   done
+while [ $# -gt 0 ]; do
+	  echo "Argument: $1"
+	    shift
+    done
 echo "BETA only supported 8 grade. algebra,geometry,chemistry"
 printf "Input the name of book:"
 read -r book
