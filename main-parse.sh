@@ -2,6 +2,7 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
+english="https://example.com" # dummy
 output_dir="./"
 if [ -n "$1" ]; then
 	case $1 in 
@@ -30,6 +31,10 @@ if [ -n "$1" ]; then
 				algebra)
 					book="$algebra"
 					bookn="Algebra"
+					;;
+				english)
+					book="$english"
+					bookn="English" # dummy
 					;;
 				*)
 					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
