@@ -79,7 +79,7 @@ if [ -n "$1" ]; then
 		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
 			echo "Failed to download url:$book-$ex";
 			exit 1; }
-		url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
+		url=$(cat "${output_dir}$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
 		url=$(echo "$url" | tr -s '[:space:]' ' ')
 		rm "${output_dir}${ex}-tmp"
 		IFS=' ' read -r -a ur <<< "$url"
