@@ -2,7 +2,7 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
-english="https://example.com" # dummy
+english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex" 
 output_dir="./"
 if [ -n "$1" ]; then
 	case $1 in 
@@ -106,41 +106,60 @@ else
 	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
 
-while [ $# -gt 0 ]; do
-	  echo "Argument: $1"
-	    shift
-    done
-echo "BETA only supported 8 grade. algebra,geometry,chemistry"
+    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing)"
 printf "Input the name of book:"
 read -r book
-book="$(printf $book|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
+book="$(echo $book|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
 if [ -n $book ]; then
-	if [ $book == "algebra" ]; then
-		book="$algebra"
-		bookn="Algebra" # adds bookn var to identify which ex was downloaded in the end
-	elif [ $book == "geometry" ]; then
-		book="$geometry"
-		bookn="Geometry"
-	elif [ $book == "chemistry" ]; then
-		book="$chemistry"
-		bookn="Chemistry"
-	else 
-		echo "input geometry,algebra or chemistry" >&2
-		exit 1	
-	fi
+	case $book in
+		algebra)
+			book="$algebra"
+			bookn="Algebra";;
+		geometry)
+			book="$geometry"
+			bookn="Geometry";;
+		chemistry)
+			book="$chemistry"
+			bookn="Chemistry";;
+		english)
+			book="$english"
+			bookn="English";;
+		*)
+			echo "Input any valid name" >&2
+			exit 1;;
+		esac
+#	if [ $book == "algebra" ]; then
+#		book="$algebra"
+#		bookn="Algebra" # adds bookn var to identify which ex was downloaded in the end
+#	elif [ $book == "geometry" ]; then
+#		book="$geometry"
+#		bookn="Geometry"
+#	elif [ $book == "chemistry" ]; then
+#		book="$chemistry"
+#		bookn="Chemistry"
+#	else 
+#		echo "input geometry,algebra or chemistry" >&2
+#		exit 1	
+#	fi
 else
 	echo "input book name next time" >&2
 	exit 1
 fi
-if [ $book != "$chemistry" ]; then
 printf "input number of the exercise:"
 read -r ex
 	if [ -z $ex ]; then
 	echo "input something" >&2
 	exit 1
 	fi
-else
-	printf "Input number of paragrapth then exercise:"
+if [ $book == "$english" ]; then
+	printf "Input number of times  exercise was in the book:"
+	read -r ex
+	if [ -z $ex ]; then
+		echo "input something" >&2
+		exit 1
+	fi
+else 
+	printf "Input number of paragraph then exercise:"
 	read -r ex
 	if [ -z $ex ]; then
 		echo "input something" >&2
