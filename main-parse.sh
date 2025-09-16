@@ -114,61 +114,36 @@ if [ -n $book ]; then
 	case $book in
 		algebra)
 			book="$algebra"
-			bookn="Algebra";;
+			bookn="Algebra"
+			printf "Enter exercise:"
+			read -r ex;;
 		geometry)
 			book="$geometry"
-			bookn="Geometry";;
+			bookn="Geometry"
+			printf "Enter exercise:"
+			read -r ex;;
 		chemistry)
 			book="$chemistry"
-			bookn="Chemistry";;
+			bookn="Chemistry"
+			printf "Enter paragraph number then exercise:"
+			read -r ex;;
 		english)
 			book="$english"
-			bookn="English";;
+			bookn="English"
+			printf "Enter exercise then how many times it was in the book:"
+			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
 			exit 1;;
 		esac
-#	if [ $book == "algebra" ]; then
-#		book="$algebra"
-#		bookn="Algebra" # adds bookn var to identify which ex was downloaded in the end
-#	elif [ $book == "geometry" ]; then
-#		book="$geometry"
-#		bookn="Geometry"
-#	elif [ $book == "chemistry" ]; then
-#		book="$chemistry"
-#		bookn="Chemistry"
-#	else 
-#		echo "input geometry,algebra or chemistry" >&2
-#		exit 1	
-#	fi
 else
 	echo "input book name next time" >&2
 	exit 1
 fi
-printf "input number of the exercise:"
-read -r ex
-	if [ -z $ex ]; then
-	echo "input something" >&2
-	exit 1
-	fi
-if [ $book == "$english" ]; then
-	printf "Input number of times  exercise was in the book:"
-	read -r ex
-	if [ -z $ex ]; then
-		echo "input something" >&2
-		exit 1
-	fi
-else 
-	printf "Input number of paragraph then exercise:"
-	read -r ex
-	if [ -z $ex ]; then
-		echo "input something" >&2
-		exit 1
-	fi
-fi
+
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
-wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; exit 1; }
+wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
 url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
 url=$(echo "$url" | tr -s '[:space:]' ' ')
 rm "./$ex-tmp" # removing temporary file to not use much space for no reason
@@ -179,11 +154,10 @@ cycle=0
 for img_url in "${ur[@]}"; do
 	    if [[ $cycle == 0 ]]; then
 		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    	    echo "${bookn}-${ex}.jpg was saved"
     	    else
 	    	wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    	echo "${bookn}-${ex}-${cycle}.jpg was saved"
 	    fi
-	    echo "${bookn}-${ex}-${cycle}.jpg was saved"
 	    ((cycle++))
 done
-#wget -O "$bookn-$ex.jpg" "$url" &>/dev/null|| { echo "failed to download!"; exit 1; } # deleting output to have cleaner look
-#echo "saved $bookn-$ex.jpg" # saying out loud that file was downloaded because there's no output from wgefor url in $urls; do
