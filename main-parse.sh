@@ -78,9 +78,10 @@ if [ -n "$1" ]; then
 
 		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
 			echo "Failed to download url:$book-$ex";
+			rm "${output_dir}$ex-tmp";
 			exit 1; }
-		url=$(cat "${output_dir}$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
-		url=$(echo "$url" | tr -s '[:space:]' ' ')
+		url=$(grep "imgs.kzgdz.com" ${output_dir}$ex-tmp|awk -F'"' '{print $6}')
+		url=$(printf "$url" | tr -s '[:space:]' ' ')
 		rm "${output_dir}${ex}-tmp"
 		IFS=' ' read -r -a ur <<< "$url"
 		cycle=0
@@ -90,15 +91,14 @@ if [ -n "$1" ]; then
 			echo "failed to download $img_url";
 			exit 1; 
 		}
-
+		echo "${bookn}-$ex.jpg was saved"
 		else
-		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" || {
+		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| {
 			echo "failed to download $img_url";
 			exit 1;
 		}
-
+		printf "${bookn}-${ex}-${cycle}.jpg was saved"
 		fi
-		echo "${bookn}-${ex}-${cycle}.jpg was saved"
 		((cycle++))
 	done
 	exit 0
@@ -144,7 +144,7 @@ fi
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
 wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
-url=$(cat "$ex"-tmp|grep imgs.kzgdz.com|awk -F'"' '{print $6}') 
+url=$(grep "imgs.kzgdz.com" $ex-tmp|awk -F'"' '{print $6}') 
 url=$(echo "$url" | tr -s '[:space:]' ' ')
 rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 # also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
