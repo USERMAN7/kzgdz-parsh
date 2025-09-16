@@ -4,6 +4,8 @@ chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex" 
 output_dir="./"
+cycle=0
+verbose=0
 if [ -n "$1" ]; then
 	case $1 in 
 		--help|-h) # help menu currently there are no some commands that are here -_-
@@ -14,42 +16,39 @@ if [ -n "$1" ]; then
 			echo "--book,-b	note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below"
 			echo "--exercise,-e	needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry you need to pass paragraph first then exercise use -e 3.7 "
 			echo "		example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" "
+			echo "--verbose,-v	sets verbose mode on by togling one variable"
 			exit 0
 			;;
 		--interactive|-i) # what do i even code here bruh
 			;;
+		--verbose|-v)
+			printf "Verbose mode set on!\n"
+			verbose=1;;
 		--book|-b)
 			case $2 in
 				geometry)
 					book="$geometry"
-					bookn="Geometry"
-					;;
+					bookn="Geometry";;
 				chemistry)
 					book="$chemistry"
-					bookn="Chemistry"
-					;;
+					bookn="Chemistry";;
 				algebra)
 					book="$algebra"
-					bookn="Algebra"
-					;;
+					bookn="Algebra";;
 				english)
 					book="$english"
-					bookn="English" # dummy
-					;;
+					bookn="English";; # Testing!
 				*)
 					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
-					exit 1
-					;;
+					exit 1;;
 			esac
 			;;
 		--exercise|-e)
 			echo "Needs to be run as third argument after --book"
-			exit 1
-			;;
+			exit 1;;
 		--out-dir|-O)
 			echo "Can be run but not necesarry after --exercise as fifth arg"
-			exit 1
-			;;
+			exit 1;;
 	esac
 	case $3 in 
 		--exercise|-e)
@@ -59,11 +58,10 @@ if [ -n "$1" ]; then
 			else
 				echo "Pass exercise number" >&2
 				exit 1
-			fi
-			;;
+			fi;;
 		*)
 			echo "You must pass something here" >&2
-			exit 1
+			exit 1;;
 	esac
 	case $5 in
 		--out-dir|-O)
@@ -72,8 +70,7 @@ if [ -n "$1" ]; then
 			else
 				echo "Not valid path:"$6"" >&2
 				exit 1
-			fi
-			;;
+			fi;;
 	esac
 
 		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
@@ -84,7 +81,6 @@ if [ -n "$1" ]; then
 		url=$(printf "$url" | tr -s '[:space:]' ' ')
 		rm "${output_dir}${ex}-tmp"
 		IFS=' ' read -r -a ur <<< "$url"
-		cycle=0
 		for img_url in "${ur[@]}"; do
 		if [[ $cycle == 0 ]]; then
 		wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| {
@@ -97,7 +93,7 @@ if [ -n "$1" ]; then
 			echo "failed to download $img_url";
 			exit 1;
 		}
-		printf "${bookn}-${ex}-${cycle}.jpg was saved"
+		printf "${bookn}-${ex}-${cycle}.jpg was saved\n"
 		fi
 		((cycle++))
 	done
@@ -150,7 +146,6 @@ rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 # also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
 echo "Found img $url"
 IFS=' ' read -r -a ur <<< "$url"
-cycle=0
 for img_url in "${ur[@]}"; do
 	    if [[ $cycle == 0 ]]; then
 		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
