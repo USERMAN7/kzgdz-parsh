@@ -6,6 +6,7 @@ english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 output_dir="./"
 cycle=0
+int=0
 verbose=0
 if [ -n "$1" ]; then
 	case $1 in 
@@ -21,10 +22,12 @@ if [ -n "$1" ]; then
 			exit 0
 			;;
 		--interactive|-i) # what do i even code here bruh
-			;;
+			int=1;;
 		--verbose|-v)
-			printf "Always set verbose as 6th argument!\n"
-			verbose=1;;
+			if [ "$#" == 1 ]; then # for now only for interactive!
+			verbose=1
+			fi;;
+
 		--book|-b)
 			case $2 in
 				geometry)
@@ -64,8 +67,11 @@ if [ -n "$1" ]; then
 				exit 1
 			fi;;
 		*)
+			if [[ "$verbose" == 0 && "$int" == 0 ]]; then
 			echo "You must pass something here" >&2
-			exit 1;;
+			exit 1
+			fi;;
+
 	esac
 	case $5 in
 		--out-dir|-O)
@@ -76,7 +82,37 @@ if [ -n "$1" ]; then
 				exit 1
 			fi
 			;;
+		--verbose|-v)
+			verbose=1;;
 	esac
+		if [[ "$verbose" == 1 ]]; then
+			wget -O "${output_dir}${ex}-tmp" "$book-$ex"|| {
+				printf "Failed to download url:$book-$ex";
+				rm "${output_dir}${ex}-tmp";
+				exit 1; }
+			url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
+			url=$(printf "$url" | tr -s '[:space:]' ' ')
+			echo "Found imgs:$url"
+			rm "${output_dir}${ex}-tmp"
+			IFS=' ' read -r -a ur <<< "$url"
+			for img_url in "${ur[@]}"; do
+			if [[ $cycle == 0 ]]; then
+			wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url"|| {
+			echo "failed to download $img_url";
+			exit 1; 
+			}
+			echo "${bookn}-$ex.jpg was saved"
+			else
+			wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url"|| {
+			echo "failed to download $img_url";
+			exit 1;
+			}
+			printf "${bookn}-${ex}-${cycle}.jpg was saved\n"
+			fi
+			((cycle++))
+			done
+			exit 0
+		else	
 		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
 		echo "Failed to download url:$book-$ex";
 		rm "${output_dir}$ex-tmp";
@@ -100,8 +136,11 @@ if [ -n "$1" ]; then
 		printf "${bookn}-${ex}-${cycle}.jpg was saved\n"
 		fi
 		((cycle++))
+
 	done
+
 	exit 0
+		fi
 else
 	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
