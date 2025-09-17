@@ -142,11 +142,11 @@ if [ -n "$book" ]; then
 			exit 1;;
 		esac
 else
-	echo "input book name next time" >&2
+	printf "input book name next time\n" >&2
 	exit 1
 fi
 if [ -z "$ex" ]; then
-	printf "You need to type something!" >&2
+	printf "You need to type something!\n" >&2
 	exit 1
 fi
 ex="${ex//./-}" # converting "." to "."
