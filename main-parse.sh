@@ -57,7 +57,7 @@ if [ -n "$1" ]; then
 	case $3 in 
 		--exercise|-e)
 			if [[ -n $4 ]]; then
-				ex=$(echo $4)
+				ex=$(printf $4)
 				ex="${ex//./-}" # converting "." to "-"
 			else
 				echo "Pass exercise number" >&2
@@ -69,19 +69,19 @@ if [ -n "$1" ]; then
 	esac
 	case $5 in
 		--out-dir|-O)
-			if [ -d $6 ]; then
+			if [ -d "$6" ]; then
 				output_dir="$6"
 			else
-				echo "Not valid path:"$6"" >&2
+				echo "Not valid path:$6 " >&2
 				exit 1
 			fi
 			;;
 	esac
-	wget -O "${output_dir}${ex}-tmp""$book-$ex" || {
-	echo "Failed to download url:$book-$ex";
-	rm "${output_dir}$ex-tmp";
-	exit 1; }
-		url=$(grep "imgs.kzgdz.com" ${output_dir}$ex-tmp|awk -F'"' '{print $6}')
+		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
+		echo "Failed to download url:$book-$ex";
+		rm "${output_dir}$ex-tmp";
+		exit 1; }
+		url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
 		url=$(printf "$url" | tr -s '[:space:]' ' ')
 		rm "${output_dir}${ex}-tmp"
 		IFS=' ' read -r -a ur <<< "$url"
@@ -106,11 +106,11 @@ else
 	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
 
-    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing)"
+    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian"
 printf "Input the name of book:"
 read -r book
-book="$(echo $book|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
-if [ -n $book ]; then
+book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
+if [ -n "$book" ]; then
 	case $book in
 		algebra)
 			book="$algebra"
@@ -145,11 +145,14 @@ else
 	echo "input book name next time" >&2
 	exit 1
 fi
-
+if [ -z "$ex" ]; then
+	printf "You need to type something!" >&2
+	exit 1
+fi
 ex="${ex//./-}" # converting "." to "."
 echo "Downloading from $book$ex"
 wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
-url=$(grep "imgs.kzgdz.com" $ex-tmp|awk -F'"' '{print $6}') 
+url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
 url=$(echo "$url" | tr -s '[:space:]' ' ')
 rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 # also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
