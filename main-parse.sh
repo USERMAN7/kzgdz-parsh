@@ -2,7 +2,8 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
-english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex" 
+english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex"
+russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 output_dir="./"
 cycle=0
 verbose=0
@@ -22,7 +23,7 @@ if [ -n "$1" ]; then
 		--interactive|-i) # what do i even code here bruh
 			;;
 		--verbose|-v)
-			printf "Verbose mode set on!\n"
+			printf "Always set verbose as 6th argument!\n"
 			verbose=1;;
 		--book|-b)
 			case $2 in
@@ -38,6 +39,9 @@ if [ -n "$1" ]; then
 				english)
 					book="$english"
 					bookn="English";; # Testing!
+				russian)
+					book="$russian"
+					bookn="Russian";;
 				*)
 					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
 					exit 1;;
@@ -70,13 +74,13 @@ if [ -n "$1" ]; then
 			else
 				echo "Not valid path:"$6"" >&2
 				exit 1
-			fi;;
+			fi
+			;;
 	esac
-
-		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
-			echo "Failed to download url:$book-$ex";
-			rm "${output_dir}$ex-tmp";
-			exit 1; }
+	wget -O "${output_dir}${ex}-tmp""$book-$ex" || {
+	echo "Failed to download url:$book-$ex";
+	rm "${output_dir}$ex-tmp";
+	exit 1; }
 		url=$(grep "imgs.kzgdz.com" ${output_dir}$ex-tmp|awk -F'"' '{print $6}')
 		url=$(printf "$url" | tr -s '[:space:]' ' ')
 		rm "${output_dir}${ex}-tmp"
@@ -127,6 +131,11 @@ if [ -n $book ]; then
 			book="$english"
 			bookn="English"
 			printf "Enter exercise then how many times it was in the book:"
+			read -r ex;;
+		russian)
+			book="$russian"
+			bookn="Russian"
+			printf "Enter exercise number:"
 			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
