@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-if [ -z $# ]; then
-	printf "It simply wasnt made for that!";
+if [[ "$#" == 0 ]]; then
+	printf "It simply wasnt made for that!\n";
 	exit 0;
 fi
 h=1
