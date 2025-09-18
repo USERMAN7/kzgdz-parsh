@@ -4,6 +4,7 @@ chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
+kazakh_literature="https://kzgdz.com/8-class/kazahskij-jazyk-i-literatura-orazbaeva-f-8-klass-2020-chast-1/u268-"
 output_dir="./"
 cycle=0
 int=0
@@ -45,6 +46,9 @@ if [ -n "$1" ]; then
 				russian)
 					book="$russian"
 					bookn="Russian";;
+				kazakh_literature)
+					book="$kazakh_literature"
+					bookn="Kazakh-literature";;
 				*)
 					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
 					exit 1;;
