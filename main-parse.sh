@@ -91,7 +91,7 @@ if [ -n "$1" ]; then
 	esac
 		if [[ "$verbose" == 1 ]]; then
 			wget -O "${output_dir}${ex}-tmp" "$book-$ex"|| {
-				printf "Failed to download url:$book-$ex";
+				printf "Failed to download url:"$book-""$ex"";
 				rm "${output_dir}${ex}-tmp";
 				exit 1; }
 			url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
