@@ -149,7 +149,7 @@ else
 	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
 
-    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian"
+    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian,kazakh_literature"
 printf "Input the name of book:"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
@@ -179,6 +179,11 @@ if [ -n "$book" ]; then
 			book="$russian"
 			bookn="Russian"
 			printf "Enter exercise number:"
+			read -r ex;;
+		kazakh_literature)
+			book="$kazakh_literature"
+			bookn="Kazakh-literature"
+			printf "Enter exercise then how many times it was in the book:"
 			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
