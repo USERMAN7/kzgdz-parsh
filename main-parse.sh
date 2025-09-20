@@ -138,7 +138,6 @@ if [ -n "$1" ]; then
 		((cycle++))
 
 	done
-
 	exit 0
 		fi
 else
