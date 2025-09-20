@@ -4,6 +4,7 @@ chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
+kazakh_literature="https://kzgdz.com/8-class/kazahskij-jazyk-i-literatura-orazbaeva-f-8-klass-2020-chast-1/u268-"
 output_dir="./"
 cycle=0
 int=0
@@ -45,6 +46,9 @@ if [ -n "$1" ]; then
 				russian)
 					book="$russian"
 					bookn="Russian";;
+				kazakh_literature)
+					book="$kazakh_literature"
+					bookn="Kazakh-literature";;
 				*)
 					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
 					exit 1;;
@@ -87,7 +91,7 @@ if [ -n "$1" ]; then
 	esac
 		if [[ "$verbose" == 1 ]]; then
 			wget -O "${output_dir}${ex}-tmp" "$book-$ex"|| {
-				printf "Failed to download url:$book-$ex";
+				printf "Failed to download url:"$book-""$ex"";
 				rm "${output_dir}${ex}-tmp";
 				exit 1; }
 			url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
@@ -144,7 +148,7 @@ else
 	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
 
-    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian"
+    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian,kazakh_literature"
 printf "Input the name of book:"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
@@ -174,6 +178,11 @@ if [ -n "$book" ]; then
 			book="$russian"
 			bookn="Russian"
 			printf "Enter exercise number:"
+			read -r ex;;
+		kazakh_literature)
+			book="$kazakh_literature"
+			bookn="Kazakh-literature"
+			printf "Enter exercise then how many times it was in the book:"
 			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
