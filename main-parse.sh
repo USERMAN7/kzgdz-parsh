@@ -167,6 +167,13 @@ if [ -n "$book" ]; then
 		chemistry)
 			book="$chemistry"
 			bookn="Chemistry"
+			printf "Do you have zadacha?:"
+			read -r zadacha
+			if [[ $zadacha == "yes" ]]; then
+			book="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
+			echo "$chemistry"
+			fi
+				
 			printf "Enter paragraph number then exercise:"
 			read -r ex;;
 		english)
