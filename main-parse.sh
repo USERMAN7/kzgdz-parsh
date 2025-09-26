@@ -2,7 +2,6 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
-english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 kazakh_literature="https://kzgdz.com/8-class/kazahskij-jazyk-i-literatura-orazbaeva-f-8-klass-2020-chast-1/u268-"
 output_dir="./"
@@ -13,13 +12,13 @@ if [ -n "$1" ]; then
 	case $1 in 
 		--help|-h) # help menu currently there are no some commands that are here -_-
 			# but they will be added
-			echo "--help,-h	 for this help menu"
-			echo "--out-dir,-O	 to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example"
-			echo "--interactive,-i	for interactive mode where you can type out which book and which exercise you want to download"
-			echo "--book,-b	note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below"
-			echo "--exercise,-e	needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry you need to pass paragraph first then exercise use -e 3.7 "
-			echo "		example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" "
-			echo "--verbose,-v	sets verbose mode on by togling one variable"
+			printf "%s--help,-h   for this help menu\n"
+			printf "%s--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
+			printf "%s--interactive,-i   for interactive mode where you can type out which book and which exercise you want to download\n"
+			printf "%s--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
+			printf "%s--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
+			printf "%s--verbose,-v   sets verbose mode on by togling one variable\n"
+			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" \n"
 			exit 0
 			;;
 		--interactive|-i) # what do i even code here bruh
@@ -40,9 +39,6 @@ if [ -n "$1" ]; then
 				algebra)
 					book="$algebra"
 					bookn="Algebra";;
-				english)
-					book="$english"
-					bookn="English";; # Testing!
 				russian)
 					book="$russian"
 					bookn="Russian";;
@@ -50,7 +46,7 @@ if [ -n "$1" ]; then
 					book="$kazakh_literature"
 					bookn="Kazakh-literature";;
 				*)
-					echo "you can put here algebra,geometry,chemistry. Failed:$2" >&2
+					printf "you can put here algebra,geometry,chemistry. Failed:$2" >&2
 					exit 1;;
 			esac
 			;;
@@ -165,21 +161,18 @@ if [ -n "$book" ]; then
 			printf "Enter exercise:"
 			read -r ex;;
 		chemistry)
-			book="$chemistry"
-			bookn="Chemistry"
 			printf "Do you have zadacha?:"
 			read -r zadacha
-			if [[ $zadacha == "yes" ]]; then
-			book="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
-			echo "$chemistry"
-			fi
-				
+			case $zadacha in
+				Y|y|yes|Yes)
+				chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
+				book="$chemistry"
+				bookn="Chemistry-zadacha";;
+				*)
+				book="$chemistry"
+				book="Chemistry";;
+			esac
 			printf "Enter paragraph number then exercise:"
-			read -r ex;;
-		english)
-			book="$english"
-			bookn="English"
-			printf "Enter exercise then how many times it was in the book:"
 			read -r ex;;
 		russian)
 			book="$russian"
