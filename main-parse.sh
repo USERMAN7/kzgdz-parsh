@@ -9,36 +9,36 @@ cycle=0
 int=0
 verbose=0
 download() {
-ex="${ex//./-}" # converting "." to "."
-echo "Downloading from $book$ex"
-wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
-url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
-url=$(echo "$url" | tr -s '[:space:]' ' ')
-rm "./$ex-tmp" # removing temporary file to not use much space for no reason
-# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
-echo "Found img $url"
-IFS=' ' read -r -a ur <<< "$url"
-for img_url in "${ur[@]}"; do
-	    if [[ $cycle == 0 ]]; then
+		ex="${ex//./-}" # converting "." to "."
+		echo "Downloading from $book$ex"
+		wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
+		url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
+		url=$(echo "$url" | tr -s '[:space:]' ' ')
+		rm "./$ex-tmp" # removing temporary file to not use much space for no reason
+		# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
+		echo "Found img $url"
+		IFS=' ' read -r -a ur <<< "$url"
+		for img_url in "${ur[@]}"; do
+	    	if [[ $cycle == 0 ]]; then
 		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
 	    	    echo "${bookn}-${ex}.jpg was saved"
-    	    else
-	    	wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
-	    	echo "${bookn}-${ex}-${cycle}.jpg was saved"
-	    fi
-	    ((cycle++))
-    done
+    	   		 else
+	    		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    		echo "${bookn}-${ex}-${cycle}.jpg was saved"
+	    	fi
+	    		((cycle++))
+    		done
 }
 if [ -n "$1" ]; then
 	case $1 in 
 		--help|-h) # help menu currently there are no some commands that are here -_-
 			# but they will be added
 			printf "%s--help,-h   for this help menu\n"
-			printf "%s--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
-			printf "%s--interactive,-i   for interactive mode where you can type out which book and which exercise you want to download\n"
-			printf "%s--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
-			printf "%s--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
-			printf "%s--verbose,-v   sets verbose mode on by togling one variable\n"
+			printf "%s--version,-V	to print current version\n"
+			printf  "%s--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
+			printf  "%s--interactive,-i   for interactive mode where you can type out which book and which exercise you want to download\n"
+			printf  "%s--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
+			printf  "%s--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
 			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" \n"
 			exit 0
 			;;
@@ -57,6 +57,10 @@ if [ -n "$1" ]; then
 				chemistry)
 					book="$chemistry"
 					bookn="Chemistry";;
+				chemistry-z)
+					chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
+					book="$chemistry"
+					bookn="Chemistry-zadacha";;
 				algebra)
 					book="$algebra"
 					bookn="Algebra";;
@@ -67,7 +71,8 @@ if [ -n "$1" ]; then
 					book="$kazakh_literature"
 					bookn="Kazakh-literature";;
 				*)
-					printf "you can put here algebra,geometry,chemistry. Failed:$2" >&2
+					printf "You can put here algebra,geometry,chemistry. Failed:%s\n" "$2" >&2
+					printf "All books for CLI algebra,geometry,chemistry,chemistry-z,russian\n" >&2
 					exit 1;;
 			esac
 			;;
@@ -77,11 +82,15 @@ if [ -n "$1" ]; then
 		--out-dir|-O)
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
+		--version|-V)
+			printf "kzgdz-parsh version v0.6-beta\nMade by USERMAN7\nDate 0.9.29.2025\nLicense GPLv2\n"
+			exit 0;;
+
 	esac
 	case $3 in 
 		--exercise|-e)
 			if [[ -n $4 ]]; then
-				ex=$(printf $4)
+				ex=$(printf %s "$4")
 				ex="${ex//./-}" # converting "." to "-"
 			else
 				echo "Pass exercise number" >&2
@@ -107,42 +116,15 @@ if [ -n "$1" ]; then
 			verbose=1;;
 	esac
 		if [[ "$verbose" == 1 ]]; then
-		download 
-		echo download
+		download verbose
 		exit 0;
 		else	
-		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
-		echo "Failed to download url:$book-$ex";
-		rm "${output_dir}$ex-tmp";
-		exit 1; }
-		url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
-		url=$(printf "$url" | tr -s '[:space:]' ' ')
-		rm "${output_dir}${ex}-tmp"
-		IFS=' ' read -r -a ur <<< "$url"
-		for img_url in "${ur[@]}"; do
-		if [[ $cycle == 0 ]]; then
-		wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| {
-			echo "failed to download $img_url";
-			exit 1; 
-		}
-		echo "${bookn}-$ex.jpg was saved"
-		else
-		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| {
-			echo "failed to download $img_url";
-			exit 1;
-		}
-		printf "${bookn}-${ex}-${cycle}.jpg was saved\n"
+		download
+		exit 0
 		fi
-		((cycle++))
-
-	done
-	exit 0
-		fi
-else
-	echo "No arguments were supplied defaulting to --interactive,-i"
 fi
-
-    echo "BETA only supported 8 grade. algebra,geometry,chemistry,(english testing),russian,kazakh_literature"
+	echo "No arguments were passed defaulting to --interactive"
+    echo "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature"
 printf "Input the name of book:"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
@@ -194,22 +176,4 @@ if [ -z "$ex" ]; then
 	printf "You need to type something!\n" >&2
 	exit 1
 fi
-ex="${ex//./-}" # converting "." to "."
-echo "Downloading from $book$ex"
-wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
-url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
-url=$(echo "$url" | tr -s '[:space:]' ' ')
-rm "./$ex-tmp" # removing temporary file to not use much space for no reason
-# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
-echo "Found img $url"
-IFS=' ' read -r -a ur <<< "$url"
-for img_url in "${ur[@]}"; do
-	    if [[ $cycle == 0 ]]; then
-		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
-	    	    echo "${bookn}-${ex}.jpg was saved"
-    	    else
-	    	wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
-	    	echo "${bookn}-${ex}-${cycle}.jpg was saved"
-	    fi
-	    ((cycle++))
-done
+download
