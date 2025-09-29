@@ -170,7 +170,7 @@ if [ -n "$book" ]; then
 				bookn="Chemistry-zadacha";;
 				*)
 				book="$chemistry"
-				book="Chemistry";;
+				bookn="Chemistry";;
 			esac
 			printf "Enter paragraph number then exercise:"
 			read -r ex;;
