@@ -3,7 +3,6 @@ geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
-kazakh_literature="https://kzgdz.com/8-class/kazahskij-jazyk-i-literatura-orazbaeva-f-8-klass-2020-chast-1/u268-"
 output_dir="./"
 cycle=0
 int=0
@@ -42,13 +41,6 @@ if [ -n "$1" ]; then
 			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" \n"
 			exit 0
 			;;
-		--interactive|-i) # what do i even code here bruh
-			int=1;;
-		--verbose|-v)
-			if [ "$#" == 1 ]; then # for now only for interactive!
-			verbose=1
-			fi;;
-
 		--book|-b)
 			case $2 in
 				geometry)
@@ -67,12 +59,8 @@ if [ -n "$1" ]; then
 				russian)
 					book="$russian"
 					bookn="Russian";;
-				kazakh_literature)
-					book="$kazakh_literature"
-					bookn="Kazakh-literature";;
 				*)
-					printf "You can put here algebra,geometry,chemistry. Failed:%s\n" "$2" >&2
-					printf "All books for CLI algebra,geometry,chemistry,chemistry-z,russian\n" >&2
+					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian. Failed:%s '$2' \n" >&2
 					exit 1;;
 			esac
 			;;
@@ -96,24 +84,15 @@ if [ -n "$1" ]; then
 				echo "Pass exercise number" >&2
 				exit 1
 			fi;;
-		*)
-			if [[ "$verbose" == 0 && "$int" == 0 ]]; then
-			echo "You must pass something here" >&2
-			exit 1
-			fi;;
-
 	esac
 	case $5 in
 		--out-dir|-O)
 			if [ -d "$6" ]; then
 				output_dir="$6"
 			else
-				echo "Not valid path:$6 " >&2
+				printf "Not valid path:%s\n" "$6" >&2
 				exit 1
-			fi
-			;;
-		--verbose|-v)
-			verbose=1;;
+				fi;;
 	esac
 		if [[ "$verbose" == 1 ]]; then
 		download verbose
@@ -123,7 +102,6 @@ if [ -n "$1" ]; then
 		exit 0
 		fi
 fi
-	echo "No arguments were passed defaulting to --interactive"
     echo "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature"
 printf "Input the name of book:"
 read -r book
@@ -159,11 +137,6 @@ if [ -n "$book" ]; then
 			bookn="Russian"
 			printf "Enter exercise number:"
 			read -r ex;;
-		kazakh_literature)
-			book="$kazakh_literature"
-			bookn="Kazakh-literature"
-			printf "Enter exercise then how many times it was in the book:"
-			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
 			exit 1;;
@@ -177,3 +150,4 @@ if [ -z "$ex" ]; then
 	exit 1
 fi
 download
+exit 0
