@@ -8,6 +8,27 @@ output_dir="./"
 cycle=0
 int=0
 verbose=0
+download() {
+ex="${ex//./-}" # converting "." to "."
+echo "Downloading from $book$ex"
+wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
+url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
+url=$(echo "$url" | tr -s '[:space:]' ' ')
+rm "./$ex-tmp" # removing temporary file to not use much space for no reason
+# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
+echo "Found img $url"
+IFS=' ' read -r -a ur <<< "$url"
+for img_url in "${ur[@]}"; do
+	    if [[ $cycle == 0 ]]; then
+		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    	    echo "${bookn}-${ex}.jpg was saved"
+    	    else
+	    	wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	    	echo "${bookn}-${ex}-${cycle}.jpg was saved"
+	    fi
+	    ((cycle++))
+    done
+}
 if [ -n "$1" ]; then
 	case $1 in 
 		--help|-h) # help menu currently there are no some commands that are here -_-
@@ -86,32 +107,9 @@ if [ -n "$1" ]; then
 			verbose=1;;
 	esac
 		if [[ "$verbose" == 1 ]]; then
-			wget -O "${output_dir}${ex}-tmp" "$book-$ex"|| {
-				printf "Failed to download url:"$book-""$ex"";
-				rm "${output_dir}${ex}-tmp";
-				exit 1; }
-			url=$(grep "imgs.kzgdz.com" "${output_dir}""${ex}"-tmp|awk -F'"' '{print $6}')
-			url=$(printf "$url" | tr -s '[:space:]' ' ')
-			echo "Found imgs:$url"
-			rm "${output_dir}${ex}-tmp"
-			IFS=' ' read -r -a ur <<< "$url"
-			for img_url in "${ur[@]}"; do
-			if [[ $cycle == 0 ]]; then
-			wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url"|| {
-			echo "failed to download $img_url";
-			exit 1; 
-			}
-			echo "${bookn}-$ex.jpg was saved"
-			else
-			wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url"|| {
-			echo "failed to download $img_url";
-			exit 1;
-			}
-			printf "${bookn}-${ex}-${cycle}.jpg was saved\n"
-			fi
-			((cycle++))
-			done
-			exit 0
+		download 
+		echo download
+		exit 0;
 		else	
 		wget -O "${output_dir}${ex}-tmp" "$book-$ex" &>/dev/null|| {
 		echo "Failed to download url:$book-$ex";
