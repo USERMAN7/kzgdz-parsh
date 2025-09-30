@@ -3,6 +3,7 @@ geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
+imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 output_dir="./"
 cycle=0
 int=0
@@ -59,6 +60,9 @@ if [ -n "$1" ]; then
 				russian)
 					book="$russian"
 					bookn="Russian";;
+				imangali)
+					book="$imangali"
+					bookn="Imagali";;
 				*)
 					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian. Failed:%s '$2' \n" >&2
 					exit 1;;
@@ -137,9 +141,15 @@ if [ -n "$book" ]; then
 			bookn="Russian"
 			printf "Enter exercise number:"
 			read -r ex;;
+		imangali)
+			book="$imangali"
+			bookn="Imangali"
+			printf "Enter exercise number:"
+			read -r ex;;
 		*)
 			echo "Input any valid name" >&2
 			exit 1;;
+
 		esac
 else
 	printf "input book name next time\n" >&2
