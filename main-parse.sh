@@ -7,7 +7,6 @@ imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 output_dir="./"
 cycle=0
 int=0
-verbose=0
 download() {
 		ex="${ex//./-}" # converting "." to "."
 		echo "Downloading from $book$ex"
@@ -28,6 +27,22 @@ download() {
 	    	fi
 	    		((cycle++))
     		done
+}
+loop() {
+	while [ "$result" -lt "$result2" ]; do
+        	printf "Downloading ${int_start}-$result\n"
+		wget -O "$result-tmp" "$book-${int_start}-$result"
+		url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
+		url=$(echo "$url" | tr -s '[:space:]' ' ')
+		rm "./$ex-tmp"
+		IFS=' ' read -r -a ur <<< "$url"
+		for img_url in "${ur[@]}"; do
+			wget "$img_url"|| { echo "failed"; exit 1; }
+			echo "$img_url was saved"
+			((cycle++))
+		done
+        	((result++))
+	done
 }
 if [ -n "$1" ]; then
 	case $1 in 
@@ -88,7 +103,24 @@ if [ -n "$1" ]; then
 				echo "Pass exercise number" >&2
 				exit 1
 			fi;;
-	esac
+		--loop|-l)
+			if [[ -n $4 ]]; then
+				start_ex=$(printf %s "$4")
+				end_ex=$(printf %s "$5")
+				int_start="${start_ex%%.*}"
+				int_end="${end_ex%%.*}"
+				if [[ "$int_start" != "$int_end" ]]; then
+					printf "Error first loop number MUST be same!\n"
+					exit 1;
+				fi
+				result="${start_ex#*.}"
+				result2="${end_ex#*.}"
+				loop
+			else
+				printf "This is loop."
+				exit 1
+			fi;;
+		esac
 	case $5 in
 		--out-dir|-O)
 			if [ -d "$6" ]; then
@@ -98,13 +130,8 @@ if [ -n "$1" ]; then
 				exit 1
 				fi;;
 	esac
-		if [[ "$verbose" == 1 ]]; then
-		download verbose
-		exit 0;
-		else	
 		download
 		exit 0
-		fi
 fi
     echo "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature"
 printf "Input the name of book:"
