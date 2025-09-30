@@ -8,6 +8,24 @@ output_dir="./"
 cycle=0
 int=0
 download() {
+	case $1 in
+	loop)
+		while [ "$result" -lt "$result2" ]; do
+       		 	printf "Downloading ${int_start}-$result\n"
+			wget -O "$result-tmp" "$book-${int_start}-$result"
+			url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
+			url=$(echo "$url" | tr -s '[:space:]' ' ')
+			rm "./$result-tmp"
+			IFS=' ' read -r -a ur <<< "$url"
+				for img_url in "${ur[@]}"; do
+					wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url"|| { echo "failed"; exit 1; }
+					echo  "${output_dir}${bookn}-${int_start}-${result}.jpg was saved"
+					((cycle++))
+				done
+        		((result++))
+		done;;
+
+		*)
 		ex="${ex//./-}" # converting "." to "."
 		echo "Downloading from $book$ex"
 		wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
@@ -26,23 +44,8 @@ download() {
 	    		echo "${bookn}-${ex}-${cycle}.jpg was saved"
 	    	fi
 	    		((cycle++))
-    		done
-}
-loop() {
-	while [ "$result" -lt "$result2" ]; do
-        	printf "Downloading ${int_start}-$result\n"
-		wget -O "$result-tmp" "$book-${int_start}-$result"
-		url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
-		url=$(echo "$url" | tr -s '[:space:]' ' ')
-		rm "./$ex-tmp"
-		IFS=' ' read -r -a ur <<< "$url"
-		for img_url in "${ur[@]}"; do
-			wget "$img_url"|| { echo "failed"; exit 1; }
-			echo "$img_url was saved"
-			((cycle++))
-		done
-        	((result++))
-	done
+    		done;;
+esac
 }
 if [ -n "$1" ]; then
 	case $1 in 
@@ -90,7 +93,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v0.6-beta\nMade by USERMAN7\nDate 0.9.29.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v0.7-beta\nMade by USERMAN7\nDate 0.9.30.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -115,7 +118,6 @@ if [ -n "$1" ]; then
 				fi
 				result="${start_ex#*.}"
 				result2="${end_ex#*.}"
-				loop
 			else
 				printf "This is loop."
 				exit 1
@@ -130,8 +132,23 @@ if [ -n "$1" ]; then
 				exit 1
 				fi;;
 	esac
+	case $6 in
+		--out-dir|-O)
+			if [ -d "$7" ]; then
+				output_dir="$7"
+			else
+				printf "Not valid path:%s\n" "$7" >&2
+				exit 1
+				fi;;
+	esac
+
+		if [[ -z $int_start ]]; then
 		download
 		exit 0
+		else
+		download loop
+		exit 0
+		fi
 fi
     echo "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature"
 printf "Input the name of book:"
