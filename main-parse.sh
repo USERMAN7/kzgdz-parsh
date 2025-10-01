@@ -34,6 +34,7 @@ download() {
 			status=$?
 			if [[ $status != 0 ]]; then
 				printf "\r${RED}Failed to download..${RESET}\n"
+				rm "./$result-tmp"
 				exit 1
 			fi
 			url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
@@ -219,8 +220,8 @@ if [ -n "$1" ]; then
 		exit 0
 		fi
 fi
-    printf "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature\n"
-printf "Input the name of book:"
+printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature${RESET}\n"
+printf "\r${YELLOW}Input the name of book:${RESET}"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
 if [ -n "$book" ]; then
@@ -228,15 +229,15 @@ if [ -n "$book" ]; then
 		algebra)
 			book="$algebra"
 			bookn="Algebra"
-			printf "Enter exercise:"
+			printf "\r${YELLOW}Enter exercise:${RESET}"
 			read -r ex;;
 		geometry)
 			book="$geometry"
 			bookn="Geometry"
-			printf "Enter exercise:"
+			printf "\r${YELLOW}Enter exercise:${RESET}"
 			read -r ex;;
 		chemistry)
-			printf "Do you have zadacha?:"
+			printf "\r${YELLOW}Do you have zadacha?:${RESET}"
 			read -r zadacha
 			case $zadacha in
 				Y|y|yes|Yes)
@@ -247,29 +248,29 @@ if [ -n "$book" ]; then
 				book="$chemistry"
 				bookn="Chemistry";;
 			esac
-			printf "Enter paragraph number then exercise:"
+			printf "\r${YELLOW}Enter paragraph number then exercise:${RESET}"
 			read -r ex;;
 		russian)
 			book="$russian"
 			bookn="Russian"
-			printf "Enter exercise number:"
+			printf "\r${YELLOW}Enter exercise number:${RESET}"
 			read -r ex;;
 		imangali)
 			book="$imangali"
 			bookn="Imangali"
-			printf "Enter exercise number:"
+			printf "\r${YELLOW}Enter exercise number:${RESET}"
 			read -r ex;;
 		*)
-			echo "Input any valid name" >&2
+			printf "\r${RED}Input any valid name${RESET}\n" >&2
 			exit 1;;
 
 		esac
 else
-	printf "input book name next time\n" >&2
+	printf "\r${RED}Input book name next time${RESET}\n" >&2
 	exit 1
 fi
 if [ -z "$ex" ]; then
-	printf "You need to type something!\n" >&2
+	printf "\r${RED}You need to type something!${RESET}\n" >&2
 	exit 1
 fi
 download
