@@ -6,20 +6,50 @@ russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 output_dir="./"
 cycle=0
-int=0
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[1;33m"
+RESET="\033[0m"
+spinner() {
+    local pid=$1
+    local delay=0.08
+    local sp='|/-\'
+    local i=0
+    while kill -0 "$pid" 2>/dev/null; do
+        local index=$((i % ${#sp}))
+        printf "\r${GREEN}[%c] Downloading...${RESET}" "${sp:$index:1}"
+        i=$((i+1))
+        sleep "$delay"
+    done
+
+       }
 download() {
 	case $1 in
 	loop)
 		while [ "$result" -lt "$result2" ]; do
-       		 	printf "Downloading ${int_start}-$result\n"
-			wget -O "$result-tmp" "$book-${int_start}-$result"
+       		 	printf "\r${YELLOW}Downloading ${GREEN}${int_start}.$result${RESET}\n"
+			wget -O "$result-tmp" "$book-${int_start}-$result" -q & pid=$!
+			spinner "$pid"
+			wait "$pid"
+			status=$?
+			if [[ $status != 0 ]]; then
+				printf "\r${RED}Failed to download..${RESET}\n"
+				exit 1
+			fi
 			url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
 			url=$(echo "$url" | tr -s '[:space:]' ' ')
 			rm "./$result-tmp"
 			IFS=' ' read -r -a ur <<< "$url"
 				for img_url in "${ur[@]}"; do
-					wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url"|| { echo "failed"; exit 1; }
-					echo  "${output_dir}${bookn}-${int_start}-${result}.jpg was saved"
+					wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					spinner "$pid"
+					wait "$pid"
+					status=$?
+					if [[ $status != 0 ]]; then
+						printf "\r${RED}Failed to download..${RESET}\n"
+						exit 1
+					fi
+					printf "\r${GREEN}${output_dir}${bookn}-${int_start}-${result}.jpg was saved${RESET}\n"
 					((cycle++))
 				done
         		((result++))
@@ -27,21 +57,46 @@ download() {
 
 		*)
 		ex="${ex//./-}" # converting "." to "."
-		echo "Downloading from $book$ex"
-		wget -O "$ex-tmp" "$book-$ex" &>/dev/null || { echo "failed to download!"; rm "./$ex-tmp"; exit 1; }
+		printf "\r${GREEN}Downloading from ${YELLOW}$book$ex${RESET}\n"
+		wget -O "$ex-tmp" "$book-$ex" -q & pid=$! 
+		spinner "$pid"
+		wait "$pid"
+		status=$?
+		if [[ $status != 0 ]]; then
+			printf "\r${RED}No such exercise exists..${RESET}\n"
+			exit 1
+		fi
+
 		url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
 		url=$(echo "$url" | tr -s '[:space:]' ' ')
 		rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 		# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
-		echo "Found img $url"
+		printf "\r${GREEN}Found img ${YELLOW}$url${RESET}\n"
 		IFS=' ' read -r -a ur <<< "$url"
 		for img_url in "${ur[@]}"; do
 	    	if [[ $cycle == 0 ]]; then
-		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
-	    	    echo "${bookn}-${ex}.jpg was saved"
+		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" -q &#>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+		    pid=$!
+		    spinner "$pid"
+		    wait "$pid"
+		    status=$?
+		    if [[ "$status" -eq 0 ]]; then 
+	    	    printf "\r${GREEN}${bookn}-${ex}.jpg was saved${RESET}\n"
+	    	    else
+			    printf "\r${RED} Failed..${RESET}\n"
+			    exit 1
+		    fi
     	   		 else
-	    		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" &>/dev/null|| { echo "failed to download $img_url"; exit 1; }
-	    		echo "${bookn}-${ex}-${cycle}.jpg was saved"
+	    		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" -q & pid=$!
+			spinner "$pid"
+			wait "$pid"
+			status=$?
+		    	if [[ "$status" -eq 0 ]]; then 
+	    		printf "\r${GREEN}${bookn}-${ex}-${cycle}.jpg was saved${RESET}\n"
+			else
+				printf "\r${RED}Failed..${RESET}\n"
+				exit 1
+			fi
 	    	fi
 	    		((cycle++))
     		done;;
@@ -50,16 +105,29 @@ esac
 if [ -n "$1" ]; then
 	case $1 in 
 		--help|-h) # help menu currently there are no some commands that are here -_-
-			# but they will be added
-			printf "%s--help,-h   for this help menu\n"
-			printf "%s--version,-V	to print current version\n"
-			printf  "%s--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
-			printf  "%s--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
-			printf  "%s--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
-			printf "%s--loop,-l	needs to passed after book similar to the exercise flag.\n	1st argument after loop needs to be starting point then an end\n"
+			# be added
+			printf "\r--help,-h   for this help menu\n"
+			printf "\r--version,-V	to print current version\n"
+			printf  "\r--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
+			printf "\r--class,--grade,-c,-g	to specify in which grade you're in. Arguments needs to passed as just integers no things like \"fifth class\". \n"
+			printf  "\r--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
+			printf  "\r--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
+			printf "\r--loop,-l	needs to passed after book similar to the exercise flag.\n	1st argument after loop needs to be starting point then an end\n"
 			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures/\"\n	example of loop \"./main-parse.sh -b Imangali -l 4.20 4.50 -O /sdcard/Pictures/\"\n"
 			exit 0
 			;;
+		--class|--grade|-c|-g)
+			case $2 in
+				7)
+					class="7";;
+				8)
+					class="8";;
+				9)
+					class="9";;
+				*)
+					printf "Only 7,8,9 grades are supported right now :(\n"
+					exit 1;;
+			esac;;
 		--book|-b)
 			case $2 in
 				geometry)
@@ -93,7 +161,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v0.7-beta\nMade by USERMAN7\nDate 09.9.25/10.1.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v0.8-beta\nMade by USERMAN7\nDate 09.9.25/10.1.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
