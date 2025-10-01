@@ -54,10 +54,10 @@ if [ -n "$1" ]; then
 			printf "%s--help,-h   for this help menu\n"
 			printf "%s--version,-V	to print current version\n"
 			printf  "%s--out-dir,-O   to specify the output directory, \"./main-parser.sh -O /sdcard/Pictures\" for example\n"
-			printf  "%s--interactive,-i   for interactive mode where you can type out which book and which exercise you want to download\n"
 			printf  "%s--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
 			printf  "%s--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
-			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures\" \n"
+			printf "%s--loop,-l	needs to passed after book similar to the exercise flag.\n	1st argument after loop needs to be starting point then an end\n"
+			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures/\"\n	example of loop \"./main-parse.sh -b Imangali -l 4.20 4.50 -O /sdcard/Pictures/\"\n"
 			exit 0
 			;;
 		--book|-b)
@@ -80,7 +80,7 @@ if [ -n "$1" ]; then
 					bookn="Russian";;
 				imangali)
 					book="$imangali"
-					bookn="Imagali";;
+					bookn="Imangali";;
 				*)
 					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian. Failed:%s '$2' \n" >&2
 					exit 1;;
@@ -93,7 +93,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v0.7-beta\nMade by USERMAN7\nDate 0.9.30.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v0.7-beta\nMade by USERMAN7\nDate 09.9.25/10.1.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -103,7 +103,7 @@ if [ -n "$1" ]; then
 				ex=$(printf %s "$4")
 				ex="${ex//./-}" # converting "." to "-"
 			else
-				echo "Pass exercise number" >&2
+				printf "Pass exercise number\n" >&2
 				exit 1
 			fi;;
 		--loop|-l)
@@ -118,8 +118,9 @@ if [ -n "$1" ]; then
 				fi
 				result="${start_ex#*.}"
 				result2="${end_ex#*.}"
+				((result2++))
 			else
-				printf "This is loop."
+				printf "This is loop.\n"
 				exit 1
 			fi;;
 		esac
@@ -150,7 +151,7 @@ if [ -n "$1" ]; then
 		exit 0
 		fi
 fi
-    echo "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature"
+    printf "BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature\n"
 printf "Input the name of book:"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
