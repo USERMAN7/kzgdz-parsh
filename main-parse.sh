@@ -35,14 +35,16 @@ download() {
 			status=$?
 			if [[ $status != 0 ]]; then
 				printf "\r${RED}Failed to download..${RESET}\n"
-				rm "./$result-tmp"
+				rm "./$result-tmp" &>/dev/null
 				exit 1
 			fi
 			url=$(grep "imgs.kzgdz.com" "$result"-tmp|awk -F'"' '{print $6}')
 			url=$(echo "$url" | tr -s '[:space:]' ' ')
 			rm "./$result-tmp"
 			IFS=' ' read -r -a ur <<< "$url"
-				for img_url in "${ur[@]}"; do
+			cycle=0
+			for img_url in "${ur[@]}"; do
+				if [[ $cycle == 0 ]]; then
 					wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
 					spinner "$pid"
 					wait "$pid"
@@ -52,6 +54,17 @@ download() {
 						exit 1
 					fi
 					printf "\r${GREEN}${output_dir}${bookn}-${int_start}-${result}.jpg was saved${RESET}\n"
+				else
+					wget -O "${output_dir}${bookn}-${int_start}-${result}-${cycle}.jpg" "$img_url" -q & pid=$!
+					spinner "$pid"
+					wait "$pid"
+					status=$?
+					if [[ $status != 0 ]]; then
+						printf "\r${RED}Failed to download..${RESET}\n"
+						exit 1
+					fi
+					printf "\r${GREEN}${output_dir}${bookn}-${int_start}-${result}-${cycle}.jpg was saved${RESET}\n"
+				fi
 					((cycle++))
 				done
         		((result++))
@@ -71,7 +84,7 @@ download() {
 
 		url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
 		url=$(echo "$url" | tr -s '[:space:]' ' ')
-		rm "./$ex-tmp" # removing temporary file to not use much space for no reason
+		rm "./*-tmp" # removing temporary file to not use much space for no reason
 		# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
 		printf "\r${GREEN}Found img ${YELLOW}$url${RESET}\n"
 		IFS=' ' read -r -a ur <<< "$url"
