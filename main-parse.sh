@@ -4,6 +4,7 @@ chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
+physics="https://kzgdz.com/8-class/fizika-krongart-b-8-klass-2018/u169-"
 output_dir="./"
 cycle=0
 GREEN="\033[0;32m"
@@ -147,11 +148,14 @@ if [ -n "$1" ]; then
 				russian)
 					book="$russian"
 					bookn="Russian";;
+				physics)
+					book="$physics"
+					bookn="Physics";;
 				imangali)
 					book="$imangali"
 					bookn="Imangali";;
 				*)
-					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian. Failed:%s '$2' \n" >&2
+					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian,physics. Failed:%s '$2' \n" >&2
 					exit 1;;
 			esac
 			;;
@@ -162,7 +166,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v0.8-beta\nMade by USERMAN7\nDate 09.9.25/10.1.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v0.9-beta\nMade by USERMAN7\nDate 09.9.25/10.2.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -253,6 +257,11 @@ if [ -n "$book" ]; then
 		russian)
 			book="$russian"
 			bookn="Russian"
+			printf "\r${YELLOW}Enter exercise number:${RESET}"
+			read -r ex;;
+		physics)
+			book="$physics"
+			bookn="Physics"
 			printf "\r${YELLOW}Enter exercise number:${RESET}"
 			read -r ex;;
 		imangali)
