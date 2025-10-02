@@ -158,7 +158,8 @@ if [ -n "$1" ]; then
 					printf "You can put here algebra,geometry,chemistry,chemistry-z,russian,physics. Failed:%s '$2' \n" >&2
 					exit 1;;
 			esac
-			;;
+			;; # This section aside from --version is just a short documentation
+			# Of itself
 		--exercise|-e)
 			echo "Needs to be run as third argument after --book"
 			exit 1;;
@@ -173,42 +174,42 @@ if [ -n "$1" ]; then
 	case $3 in 
 		--exercise|-e)
 			if [[ -n $4 ]]; then
-				ex=$(printf %s "$4")
+				ex=$(printf %s "$4") # putting $4 in ex var
 				ex="${ex//./-}" # converting "." to "-"
 			else
-				printf "Pass exercise number\n" >&2
-				exit 1
+				printf "Pass exercise number\n" >&2 # If nothing was passed
+				exit 1 # Exit with error code
 			fi;;
 		--loop|-l)
-			if [[ -n $4 ]]; then
-				start_ex=$(printf %s "$4")
-				end_ex=$(printf %s "$5")
-				int_start="${start_ex%%.*}"
-				int_end="${end_ex%%.*}"
-				if [[ "$int_start" != "$int_end" ]]; then
-					printf "Error first loop number MUST be same!\n"
+			if [[ -n $4 ]]; then # Loop is pretty much ex but just buffed
+				start_ex=$(printf %s "$4") # Same thing, this is start ex
+				end_ex=$(printf %s "$5") # Now this is end exercise
+				int_start="${start_ex%%.*}" # Getting int var before dot, because bash cant do math with floats
+				int_end="${end_ex%%.*}" # Same for end
+				if [[ "$int_start" != "$int_end" ]]; then # I didn't even tried to make a logic for this.
+					printf "Error first loop number MUST be same!\n" # Yeah
 					exit 1;
 				fi
-				result="${start_ex#*.}"
+				result="${start_ex#*.}" 
 				result2="${end_ex#*.}"
-				((result2++))
+				((result2++)) # Bumping result2 for 1 int because for loop looping until result is smaller that result2 so this needs to be bumped one time
 			else
-				printf "This is loop.\n"
+				printf "This is loop.\n" # No documentation :(
 				exit 1
 			fi;;
 		esac
 	case $5 in
 		--out-dir|-O)
-			if [ -d "$6" ]; then
+			if [ -d "$6" ]; then # Check if directory exists if so change output_dir from default "./" <-- inside project directory to custom one
 				output_dir="$6"
 			else
-				printf "Not valid path:%s\n" "$6" >&2
+				printf "Not valid path:%s\n" "$6" >&2 # If check fails exit with error code.
 				exit 1
 				fi;;
 	esac
 	case $6 in
 		--out-dir|-O)
-			if [ -d "$7" ]; then
+			if [ -d "$7" ]; then # Making same thing because of new loop func
 				output_dir="$7"
 			else
 				printf "Not valid path:%s\n" "$7" >&2
@@ -216,12 +217,12 @@ if [ -n "$1" ]; then
 				fi;;
 	esac
 
-		if [[ -z $int_start ]]; then
+		if [[ -z $int_start ]]; then # If $int_start does not exist we know that "--loop" wasnt called or atleast failed
 		download
-		exit 0
+		exit 0 
 		else
-		download loop
-		exit 0
+		download loop # loop method
+		exit 0 # Exiting to not continue code
 		fi
 fi
 printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature${RESET}\n"
@@ -229,7 +230,7 @@ printf "\r${YELLOW}Input the name of book:${RESET}"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
 if [ -n "$book" ]; then
-	case $book in
+	case $book in # All of logic is the same aside from chemistry
 		algebra)
 			book="$algebra"
 			bookn="Algebra"
@@ -275,7 +276,7 @@ if [ -n "$book" ]; then
 
 		esac
 else
-	printf "\r${RED}Input book name next time${RESET}\n" >&2
+	printf "\r${RED}Input book name next time${RESET}\n" >&2 # Better luck next time
 	exit 1
 fi
 if [ -z "$ex" ]; then
@@ -283,4 +284,4 @@ if [ -z "$ex" ]; then
 	exit 1
 fi
 download
-exit 0
+exit 0 # If you reached this that means my utility served it's purpose
