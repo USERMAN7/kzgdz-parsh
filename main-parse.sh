@@ -225,7 +225,7 @@ if [ -n "$1" ]; then
 		exit 0 # Exiting to not continue code
 		fi
 fi
-printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature${RESET}\n"
+printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature,physics${RESET}\n"
 printf "\r${YELLOW}Input the name of book:${RESET}"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
