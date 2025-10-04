@@ -184,7 +184,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v0.9-beta\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
