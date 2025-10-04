@@ -184,7 +184,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v1\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1.0\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -256,15 +256,15 @@ if [ -n "$book" ]; then
 		algebra)
 			book="$algebra"
 			bookn="Algebra"
-			printf "\r${YELLOW}Enter exercise:${RESET}"
+			printf "\r${YELLOW}Enter exercise:${GREEN}"
 			read -r ex;;
 		geometry)
 			book="$geometry"
 			bookn="Geometry"
-			printf "\r${YELLOW}Enter exercise:${RESET}"
+			printf "\r${YELLOW}Enter exercise:${GREEN}"
 			read -r ex;;
 		chemistry)
-			printf "\r${YELLOW}Do you have zadacha?:${RESET}"
+			printf "\r${YELLOW}Do you have zadacha?:${GREEN}"
 			read -r zadacha
 			case $zadacha in
 				Y|y|yes|Yes)
@@ -275,7 +275,7 @@ if [ -n "$book" ]; then
 				book="$chemistry"
 				bookn="Chemistry";;
 			esac
-			printf "\r${YELLOW}Enter paragraph number then exercise:${RESET}"
+			printf "\r${YELLOW}Enter paragraph number then exercise:${GREEN}"
 			read -r ex;;
 		russian)
 			book="$russian"
@@ -285,18 +285,20 @@ if [ -n "$book" ]; then
 		english)	
 			book="$english"
 			bookn="English"
-			read -p  "Input page number: " page
-			read -p  "Input exercise number: " ex 
+			printf "\r${YELLOW}Input page number:${GREEN}"
+			read -r page
+			printf "\r${YELLOW}Input exercise number:${GREEN}"
+			read -r  ex 
 			ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$");;
 		physics)
 			book="$physics"
 			bookn="Physics"
-			printf "\r${YELLOW}Enter exercise number:${RESET}"
+			printf "\r${YELLOW}Enter exercise number:${GREEN}"
 			read -r ex;;
 		imangali)
 			book="$imangali"
 			bookn="Imangali"
-			printf "\r${YELLOW}Enter exercise number:${RESET}"
+			printf "\r${YELLOW}Enter exercise number:${GREEN}"
 			read -r ex;;
 		*)
 			printf "\r${RED}Input any valid name${RESET}\n" >&2
