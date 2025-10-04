@@ -194,9 +194,9 @@ if [ -n "$1" ]; then
 				ex=$(printf %s "$4") # putting $4 in ex var
 				ex="${ex//./-}" # converting "." to "-"
 				if [[ $2 == "english" ]]; then
-					page_num="$4"
-					task="$5"
-					ex=$(grep "p_${page_num}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${task}(-[0-9]+)?$")
+					page="$4"
+					ex="$5"
+					ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$")
 				fi
 			else
 				printf "Pass exercise number\n" >&2 # If nothing was passed
@@ -285,9 +285,9 @@ if [ -n "$book" ]; then
 		english)	
 			book="$english"
 			bookn="English"
-			read -p  "Input page number: " page_num
-			read -p  "Input exercise number: " task
-			ex=$(grep "p_${page_num}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${task}(-[0-9]+)?$");;
+			read -p  "Input page number: " page
+			read -p  "Input exercise number: " ex 
+			ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$");;
 		physics)
 			book="$physics"
 			bookn="Physics"
