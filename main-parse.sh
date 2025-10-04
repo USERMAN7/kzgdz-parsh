@@ -8,6 +8,7 @@ imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 physics="https://kzgdz.com/8-class/fizika-krongart-b-8-klass-2018/u169-"
 output_dir="./"
 cycle=0
+compression=0
 GREEN="\033[0;32m"
 RED="\033[0;31m"
 YELLOW="\033[1;33m"
@@ -25,6 +26,26 @@ spinner() {
     done
 
        }
+compress() { 
+       	which magick >/dev/null
+	if [[ $? == 0 ]]; then
+		if [ $compression > 0 ]; then
+			magick "${output_dir}${bookn}-${ex}.jpg" -quality $compression "${output_dir}${bookn}-${ex}.jpg"
+		fi
+	elif [[ $? == 127 ]]; then
+		ls /data/data/com.termux/files/usr/bin/magick >/dev/null
+		if [ $? == 0 ]; then
+			if [ $compression > 0 ]; then
+				magick "${output_dir}${bookn}-${ex}.jpg" -quality $compression "${output_dir}${bookn}-${ex}.jpg"||echo "${output_dir}${bookn}-${ex}}.jpg"
+				echo "${output_dir}${bookn}-${ex}.jpg"
+			fi
+		else
+			echo -e "${RED}Magick was not installed, cannot provide any compression, you can install it if you like${RESET}"
+		fi
+
+	else
+		echo -e "${RED}Magick was not installed, cannot provide any compression, you can install it if you like${RESET}"
+	fi }
 download() {
 	case $1 in
 	loop)
@@ -55,6 +76,11 @@ download() {
 						exit 1
 					fi
 					printf "\r${GREEN}${output_dir}${bookn}-${int_start}-${result}.jpg was saved${RESET}\n"
+				#	if [[ "$compression" > 0 ]]; then
+				#		ex="${int_start}.${result}"
+				#		echo $ex
+				#		compress Under investigation!!
+				#	fi
 				else
 					wget -O "${output_dir}${bookn}-${int_start}-${result}-${cycle}.jpg" "$img_url" -q & pid=$!
 					spinner "$pid"
@@ -98,6 +124,9 @@ download() {
 		    status=$?
 		    if [[ "$status" -eq 0 ]]; then 
 	    	    printf "\r${GREEN}${bookn}-${ex}.jpg was saved${RESET}\n"
+		    if [[ "$compression" > 0 ]]; then
+			    compress
+		    fi
 	    	    else
 			    printf "\r${RED} Failed..${RESET}\n"
 			    exit 1
@@ -109,6 +138,9 @@ download() {
 			status=$?
 		    	if [[ "$status" -eq 0 ]]; then 
 	    		printf "\r${GREEN}${bookn}-${ex}-${cycle}.jpg was saved${RESET}\n"
+			if [[ "$compression" > 0 ]]; then
+				compress
+			fi
 			else
 				printf "\r${RED}Failed..${RESET}\n"
 				exit 1
@@ -153,8 +185,7 @@ if [ -n "$1" ]; then
 					book="$chemistry"
 					bookn="Chemistry";;
 				chemistry-z)
-					chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
-					book="$chemistry"
+					book="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
 					bookn="Chemistry-zadacha";;
 				algebra)
 					book="$algebra"
@@ -184,7 +215,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v1.0\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1.1\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -229,6 +260,21 @@ if [ -n "$1" ]; then
 				printf "Not valid path:%s\n" "$6" >&2 # If check fails exit with error code.
 				exit 1
 				fi;;
+	--compression|-j)
+			if [ -n "$6" ]; then
+				if [[ $7 > 100 ]]; then
+					echo "That cant be true" >&2
+				elif [[ $6 == 100 ]]; then
+					printf "That cant be true\n" >&2	
+				fi
+				compression="$6"
+				printf "\r${GREEN}Using compression${RESET}\n"
+			else
+				printf "\r${YELLOW}A compression makes images way smaller. You need to pass a number from 0-100 to compress image${RESET}\n"
+			       	exit 1
+			fi;;	
+
+
 	esac
 	case $6 in
 		--out-dir|-O)
@@ -238,6 +284,20 @@ if [ -n "$1" ]; then
 				printf "Not valid path:%s\n" "$7" >&2
 				exit 1
 				fi;;
+		--compression|-j)
+			if [ -n "$7" ]; then
+				if [[ $7 > 100 ]]; then
+					echo "That cant be true" >&2
+				elif [[ $7 == 100 ]]; then
+					printf "That cant be true\n" >&2	
+				fi
+				compression="$7"
+				printf "\r${GREEN}Using compression${RESET}\n"
+			else
+				printf "\r${YELLOW}A compression makes images way smaller. You need to pass a number from 0-100 to compress image${RESET}\n"
+			       	exit 1
+			fi;;	
+
 	esac
 
 		if [[ -z $int_start ]]; then # If $int_start does not exist we know that "--loop" wasnt called or atleast failed
