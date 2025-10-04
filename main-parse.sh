@@ -194,8 +194,9 @@ if [ -n "$1" ]; then
 				ex=$(printf %s "$4") # putting $4 in ex var
 				ex="${ex//./-}" # converting "." to "-"
 				if [[ $2 == "english" ]]; then
-					page="$4"
-					ex="$5"
+					ex="$4"
+					page="${ex%%.*}"
+					ex="${ex#*.}"
 					ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$")
 				fi
 			else
