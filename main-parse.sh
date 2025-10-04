@@ -2,6 +2,7 @@
 geometry="https://kzgdz.com/8-class/geometry-shinibekob-8-2018/u23-"
 chemistry="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-"
 algebra="https://kzgdz.com/8-class/algebra-shinibekov-8-2018/u29-"
+english="https://kzgdz.com/8-class/anglijskij-jazyk-excel-for-kazakhstan-grade-8-students-book-virdzhiniija-jevans-8-klass-2019/u173-ex-"
 russian="https://kzgdz.com/8-class/russkij-jazyk-sabitova-8-klass-2018/u239-"
 imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 physics="https://kzgdz.com/8-class/fizika-krongart-b-8-klass-2018/u169-"
@@ -84,7 +85,7 @@ download() {
 
 		url=$(grep "imgs.kzgdz.com" "$ex"-tmp|awk -F'"' '{print $6}') 
 		url=$(echo "$url" | tr -s '[:space:]' ' ')
-		rm "./*-tmp" # removing temporary file to not use much space for no reason
+		rm "./$ex-tmp" # removing temporary file to not use much space for no reason
 		# also deleting in ./ directory because sometime downloading some non existient file can cause - in name which triggers "--help" in rm
 		printf "\r${GREEN}Found img ${YELLOW}$url${RESET}\n"
 		IFS=' ' read -r -a ur <<< "$url"
@@ -158,6 +159,9 @@ if [ -n "$1" ]; then
 				algebra)
 					book="$algebra"
 					bookn="Algebra";;
+				english)
+					book="$english"
+					bookn="English";;
 				russian)
 					book="$russian"
 					bookn="Russian";;
@@ -189,6 +193,11 @@ if [ -n "$1" ]; then
 			if [[ -n $4 ]]; then
 				ex=$(printf %s "$4") # putting $4 in ex var
 				ex="${ex//./-}" # converting "." to "-"
+				if [[ $2 == "english" ]]; then
+					page_num="$4"
+					task="$5"
+					ex=$(grep "p_${page_num}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${task}(-[0-9]+)?$")
+				fi
 			else
 				printf "Pass exercise number\n" >&2 # If nothing was passed
 				exit 1 # Exit with error code
@@ -273,6 +282,12 @@ if [ -n "$book" ]; then
 			bookn="Russian"
 			printf "\r${YELLOW}Enter exercise number:${RESET}"
 			read -r ex;;
+		english)	
+			book="$english"
+			bookn="English"
+			read -p  "Input page number: " page_num
+			read -p  "Input exercise number: " task
+			ex=$(grep "p_${page_num}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${task}(-[0-9]+)?$");;
 		physics)
 			book="$physics"
 			bookn="Physics"
