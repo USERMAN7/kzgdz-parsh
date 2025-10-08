@@ -67,7 +67,12 @@ download() {
 			cycle=0
 			for img_url in "${ur[@]}"; do
 				if [[ $cycle == 0 ]]; then
-					wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					if [[ "$bookn" == "English" ]]; then
+						echo "you're here"
+						wget -O "${output_dir}${bookn}-${page}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					else
+						wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					fi
 					spinner "$pid"
 					wait "$pid"
 					status=$?
@@ -76,12 +81,12 @@ download() {
 						exit 1
 					fi
 					printf "\r${GREEN}${output_dir}${bookn}-${int_start}-${result}.jpg was saved${RESET}\n"
-				#	if [[ "$compression" > 0 ]]; then
-				#		ex="${int_start}.${result}"
-				#		echo $ex
-				#		compress Under investigation!!
-				#	fi
 				else
+					if [[ "$bookn" == "English" ]]; then
+						wget -O "${output_dir}${bookn}-${page}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					else
+						wget -O "${output_dir}${bookn}-${int_start}-${result}-${cycle}.jpg" "$img_url" -q & pid=$!
+					fi
 					wget -O "${output_dir}${bookn}-${int_start}-${result}-${cycle}.jpg" "$img_url" -q & pid=$!
 					spinner "$pid"
 					wait "$pid"
@@ -161,6 +166,7 @@ if [ -n "$1" ]; then
 			printf  "\r--book,-b   note always needs to be first argument, example of use \"./main-parser.sh --book chemistry\" then exercise needs to be passed see below\n"
 			printf  "\r--exercise,-e   needs to be passed after book arg see above for explanation. can be passed like --exercise 1.4 or -e 1.4 for some books like chemistry\n	 you need to pass paragraph first then exercise use -e 3.7 \n"
 			printf "\r--loop,-l	needs to passed after book similar to the exercise flag.\n	1st argument after loop needs to be starting point then an end\n"
+			printf "\r--compression,-j can be passed as 6th or 5th argument. You need to specify compression level from 1-100 pass it as integer.\n"
 			printf "	example you can use it by typing \" ./main-parse.sh --book algebra -e 1.5 -O /sdcard/Pictures/\"\n	example of loop \"./main-parse.sh -b Imangali -l 4.20 4.50 -O /sdcard/Pictures/\"\n"
 			exit 0
 			;;
@@ -215,7 +221,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v1.1\nMade by USERMAN7\nDate 09.9.25/10.4.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1.1\nMade by USERMAN7\nDate 09.9.25/10.8.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -308,7 +314,7 @@ if [ -n "$1" ]; then
 		exit 0 # Exiting to not continue code
 		fi
 fi
-printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature,physics${RESET}\n"
+printf "\r${YELLOW}BETA only supported 8 grade. algebra,geometry,chemistry,russian,kazakh_literature,physics,english${RESET}\n"
 printf "\r${YELLOW}Input the name of book:${RESET}"
 read -r book
 book="$(echo "$book"|tr '[:upper:]' '[:lower:]')" # converting upper case to lower case
