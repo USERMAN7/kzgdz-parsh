@@ -67,11 +67,10 @@ download() {
 			cycle=0
 			for img_url in "${ur[@]}"; do
 				if [[ $cycle == 0 ]]; then
-					if [[ "$bookn" == "English" ]]; then
-						echo "you're here"
-						wget -O "${output_dir}${bookn}-${page}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
-					else
+					if [[ -z $page ]]; then
 						wget -O "${output_dir}${bookn}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
+					else
+						wget -O "${output_dir}${bookn}-${page}-${int_start}-${result}.jpg" "$img_url" -q & pid=$!
 					fi
 					spinner "$pid"
 					wait "$pid"
@@ -242,6 +241,15 @@ if [ -n "$1" ]; then
 			fi;;
 		--loop|-l)
 			if [[ -n $4 ]]; then # Loop is pretty much ex but just buffed
+				if [[ $bookn == "English" ]]; then
+					start_ex="$4"
+					int_start="${start_ex%%.*}"
+					end_ex="$5"
+					int_end="${end_ex%%.*}"
+					result="${start_ex#*.}"
+					echo atleast tried
+					exit
+				else
 				start_ex=$(printf %s "$4") # Same thing, this is start ex
 				end_ex=$(printf %s "$5") # Now this is end exercise
 				int_start="${start_ex%%.*}" # Getting int var before dot, because bash cant do math with floats
@@ -253,6 +261,7 @@ if [ -n "$1" ]; then
 				result="${start_ex#*.}" 
 				result2="${end_ex#*.}"
 				((result2++)) # Bumping result2 for 1 int because for loop looping until result is smaller that result2 so this needs to be bumped one time
+				fi
 			else
 				printf "This is loop.\n" # No documentation :(
 				exit 1
