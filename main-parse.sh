@@ -190,7 +190,7 @@ if [ -n "$1" ]; then
 					book="$chemistry"
 					bookn="Chemistry";;
 				chemistry-z)
-					book="https://kzgdz.com/8-class/himiya-ospanova-8-2018/v34-zadacha-"
+					book="https://kzgdz.com/8-class/himiya-ospanova-8-2018/z34-zadacha-"
 					bookn="Chemistry-zadacha";;
 				algebra)
 					book="$algebra"
