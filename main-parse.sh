@@ -8,6 +8,7 @@ imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 physics="https://kzgdz.com/8-class/fizika-krongart-b-8-klass-2018/u169-"
 output_dir="./"
 cycle=0
+eng=0
 compression=0
 GREEN="\033[0;32m"
 RED="\033[0;31m"
@@ -121,7 +122,11 @@ download() {
 		IFS=' ' read -r -a ur <<< "$url"
 		for img_url in "${ur[@]}"; do
 	    	if [[ $cycle == 0 ]]; then
+		    if [ -z "$eng" ]; then
 		    wget -O "${output_dir}${bookn}-${ex}.jpg" "$img_url" -q &#>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+	   	 else
+		    wget -O "${output_dir}${bookn}-${eng}.jpg" "$img_url" -q &#>/dev/null|| { echo "failed to download $img_url"; exit 1; }
+		    fi
 		    pid=$!
 		    spinner "$pid"
 		    wait "$pid"
@@ -136,7 +141,11 @@ download() {
 			    exit 1
 		    fi
     	   		 else
-	    		wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" -q & pid=$!
+				 if [ -z "$eng" ]; then
+				 wget -O "${output_dir}${bookn}-${ex}-${cycle}.jpg" "$img_url" -q & pid=$!
+			 else
+				 wget -O "${output_dir}${bookn}-${eng}-${cycle}.jpg" "$img_url" -q & pid=$!
+				 fi
 			spinner "$pid"
 			wait "$pid"
 			status=$?
@@ -220,7 +229,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v1.1.1\nMade by USERMAN7\nDate 09.9.25/11.11.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1.1.2\nMade by USERMAN7\nDate 09.9.25/12.02.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
@@ -233,6 +242,7 @@ if [ -n "$1" ]; then
 					ex="$4"
 					page="${ex%%.*}"
 					ex="${ex#*.}"
+					eng="$page"."$ex"
 					ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$")
 				fi
 			else
