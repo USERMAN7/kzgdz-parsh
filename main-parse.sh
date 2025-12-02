@@ -375,6 +375,7 @@ if [ -n "$book" ]; then
 			read -r page
 			printf "\r${YELLOW}Input exercise number:${GREEN}"
 			read -r  ex 
+			eng="$page"."$ex"
 			ex=$(grep "p_${page}:" $(pwd)/.books/8-english-excel/conf| cut -d: -f2 | tr ',' '\n' | grep -E "^${ex}(-[0-9]+)?$");;
 		physics)
 			book="$physics"
