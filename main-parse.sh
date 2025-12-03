@@ -132,7 +132,12 @@ download() {
 		    wait "$pid"
 		    status=$?
 		    if [[ "$status" -eq 0 ]]; then 
-	    	    printf "\r${GREEN}${bookn}-${ex}.jpg was saved${RESET}\n"
+			    if [ -z "$eng" ]; then
+	    	    		printf "\r${GREEN}${bookn}-${ex}.jpg was saved${RESET}\n"
+			else
+	    	    		printf "\r${GREEN}${bookn}-${eng}.jpg was saved${RESET}\n"
+			    fi
+				    
 		    if [[ "$compression" > 0 ]]; then
 			    compress
 		    fi
@@ -150,7 +155,12 @@ download() {
 			wait "$pid"
 			status=$?
 		    	if [[ "$status" -eq 0 ]]; then 
-	    		printf "\r${GREEN}${bookn}-${ex}-${cycle}.jpg was saved${RESET}\n"
+				echo 1
+				if [ -z "$eng" ]; then
+	    				printf "\r${GREEN}${bookn}-${ex}-${cycle}.jpg was saved${RESET}\n"
+				else
+					printf "\r${GREEN}${bookn}-${eng}-${cycle}.jpg was saved${RESET}\n"
+				fi
 			if [[ "$compression" > 0 ]]; then
 				compress
 			fi
