@@ -8,7 +8,7 @@ imangali="https://kzgdz.com/8-class/algebra-abylkasimova-8-2018/u7-"
 physics="https://kzgdz.com/8-class/fizika-krongart-b-8-klass-2018/u169-"
 output_dir="./"
 cycle=0
-eng=0
+eng=
 compression=0
 GREEN="\033[0;32m"
 RED="\033[0;31m"
@@ -155,13 +155,12 @@ download() {
 			wait "$pid"
 			status=$?
 		    	if [[ "$status" -eq 0 ]]; then 
-				echo 1
 				if [ -z "$eng" ]; then
 	    				printf "\r${GREEN}${bookn}-${ex}-${cycle}.jpg was saved${RESET}\n"
 				else
 					printf "\r${GREEN}${bookn}-${eng}-${cycle}.jpg was saved${RESET}\n"
 				fi
-			if [[ "$compression" > 0 ]]; then
+			if [[ "$compression" -gt 0 ]]; then
 				compress
 			fi
 			else
@@ -239,7 +238,7 @@ if [ -n "$1" ]; then
 			echo "Can be run but not necesarry after --exercise as fifth arg"
 			exit 1;;
 		--version|-V)
-			printf "kzgdz-parsh version v1.1.2\nMade by USERMAN7\nDate 09.9.25/12.02.2025\nLicense GPLv2\n"
+			printf "kzgdz-parsh version v1.1.2\nMade by USERMAN7\nDate 09.9.25/12.03.2025\nLicense GPLv2\n"
 			exit 0;;
 
 	esac
